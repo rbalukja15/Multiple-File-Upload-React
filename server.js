@@ -21,22 +21,18 @@ var storage = multer.diskStorage({
   }
 });
 
-var upload = multer({ storage: storage }).array('file');
+var upload = multer({ storage: storage });
 
 // creating POST endpoint /file
-app.post('/file',function(req, res) {
-     
-    upload(req, res, function (err) {
-           if (err instanceof multer.MulterError) {
-               return res.status(500).json(err)
-           } else if (err) {
-               return res.status(500).json(err)
-           }
-           
-      return res.status(200).send(req.file);
-    })
-
-});
+app.post('/file', upload.array('files'), (req, res, next) => {
+  const files = req.files;
+  if (!files) {
+    const error = new Error('No File')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+    res.send({sttus:  'ok'});
+})
 
 app.listen(port, error => {
   if (error) throw error
