@@ -1,21 +1,4 @@
-<!-- <div>
-  <div className="container mt-4">
-    <h4>Multiple File Upload</h4>
-    <div>
-      <form>
-        <div className="custom-file mt-4">
-          <input type="file" className="custom-file-input" id="customFile" multiple (change)="handleUploadChange($event)">
-          <label className="custom-file-label" htmlFor="customFile">Choose file</label>
-          <button type="submit">Upload</button>
-        </div>
-      </form>
-      <app-progress [previewFile]="file" > </app-progress>
-      <img *ngFor='let img of imgArray'  [src]="img" height="200"> <br/>
-    </div>
-  </div>
-</div> -->
-<hr>
-<h2 style="text-align: center">Multiple</h2>
+<h2>Multiple</h2>
 <div style="text-align: center">
   <form>
     <div>
@@ -23,7 +6,21 @@
     </div>
     <br>
     <div>
-      <button type="submit" (click)="onMultipleSubmit()">Multiple Upload</button>
+      <button class="btn btn-success" type="submit" (click)="onMultipleSubmit()">Multiple Upload</button>
     </div>
   </form>
+
+  <div class="wrapper">
+    <h4>Uploading Files</h4>
+    <div class="wrapperItem" *ngFor='let img of imgArray'>
+        <div class="leftSide">
+          <label>{{img.name}}</label>
+          <div class='row mt-5'>
+            <div class='col-md-6 m-auto'>
+              <img style="width: 100%" [src]="img.url" alt=''/>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
 </div>

@@ -1,0 +1,43 @@
+.wrapper {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: white;
+  width: 100%;
+  overflow: scroll;
+  max-height: 500px;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.wrapper > h4 {
+  background-color: beige;
+  margin: 0;
+  padding: 20px;
+}
+
+.wrapperItem {
+  display: grid;
+  grid-template-columns: calc(100% - 50px) 50px;
+  padding: 16px;
+  box-shadow: 0px 1px 2px lightgrey;
+}
+
+.leftSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-right: 8px;
+}
+
+.leftSide > label {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+h2 {
+  text-align: center;
+  padding: 20px;
+}

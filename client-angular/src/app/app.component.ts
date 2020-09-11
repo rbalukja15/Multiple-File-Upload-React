@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FileService} from './file.service';
 import { FileUploader } from 'ng2-file-upload';
-import { HttpClient } from '@angular/common/http';
+import { HttpEventType } from '@angular/common/http';
 
 const URL = 'http://localhost:5000/file';
 
@@ -17,28 +17,45 @@ export class AppComponent implements OnInit{
   });
 
   title = 'my-new-app';
-  file: [];
   imgArray = [];
   imgTypes = ['jpg', 'jpeg', 'png', 'gif'];
   images;
   multipleImages = [];
 
-  constructor(private fileService: FileService, private http: HttpClient) {
+  constructor(private fileService: FileService) {
   }
 
   ngOnInit() {
   }
 
-  selectImage(event) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.images = file;
-    }
-  }
-
   selectMultipleImage(event){
     if (event.target.files.length > 0) {
       this.multipleImages = event.target.files;
+      for (let index = 0; index < this.multipleImages.length; index++) {
+        const image = {
+          name: '',
+          url: '',
+          progress: ''
+        };
+        const reader = new FileReader();
+
+        image.name = this.multipleImages[index].name;
+        reader.onload = () => {
+          if (reader.readyState === 2) {
+            const extension = this.multipleImages[index].name.split('.').pop().toLowerCase();
+            if ( this.imgTypes.indexOf(extension) > -1 )
+              {
+                image.url = reader.result + '';
+                this.imgArray.push(image);
+              }
+            else
+              {
+                this.imgArray.push('');
+              }
+          }
+        };
+        reader.readAsDataURL(event.target.files[index]);
+    }
     }
   }
 
@@ -48,60 +65,13 @@ export class AppComponent implements OnInit{
       formData.append('files', img);
     }
 
-    this.fileService.uploadFile(formData).subscribe(e => {
+    this.fileService.uploadFile(formData).subscribe(event => {
+      if (event.type === HttpEventType.UploadProgress) {
+        console.log('Upload Progress ' + Math.round(event.loaded / event.total ) * 100 + '%');
+      }
+      else if (event.type === HttpEventType.Response) {
+        console.log(event);
+      }
     });
-
-    // this.http.post<any>('http://localhost:5000/file', formData).subscribe(
-    //   (res) => console.log(res),
-    //   (err) => console.log(err)
-    // );
   }
-  // async handleUploadChange(event: any) {
-  //   event.preventDefault();
-  //   const files = event.target.files || [];
-  //   for (let index = 0; index < files.length; index++) {
-  //     const reader = new FileReader();
-  //     const extension = files[index].name.split('.').pop().toLowerCase();
-  //     const in_file = files[index];
-
-  //     if ( this.imgTypes.indexOf(extension) > -1 ) {
-  //       const readUploadedFileAsText = (inputFile) => {
-  //         const fileReader = new FileReader();
-
-  //         return new Promise((resolve, reject) => {
-  //           fileReader.onerror = () => {
-  //             fileReader.abort();
-  //             reject(new DOMException('Problem parsing input file.'));
-  //           };
-
-  //           fileReader.onload = () => {
-  //             resolve(fileReader.result);
-  //           };
-  //           fileReader.readAsDataURL(inputFile);
-  //         });
-  //       };
-
-  //       const fileContents = await readUploadedFileAsText(in_file);
-  //       this.imgArray.push(fileContents);
-  //     }
-  //     else{
-  //       this.imgArray.push('');
-  //     }
-
-  //   }
-
-  //   // console.log(this.imgArray);
-  //   this.uploadFile(this.imgArray);
-  // }
-
-  // uploadFile(files){
-  //   if (files.length) {
-  //     const formData: FormData = new FormData();
-  //     files.forEach(async file => {
-  //       formData.append('files', file, file.name);
-  //       this.fileService.uploadFile(formData).subscribe(e => {
-  //       });
-  //   });
-  //   }
-  // }
 }
